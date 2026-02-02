@@ -8,30 +8,22 @@ namespace club
   struct ClientArrive
   {
     std::string client_name;
-    std::size_t hours;
-    std::size_t mins;
   };
 
   struct ClientSit
   {
     std::string client_name;
-    std::size_t hours;
-    std::size_t mins;
     std::size_t table;
   };
 
   struct ClientWait
   {
     std::string client_name;
-    std::size_t hours;
-    std::size_t mins;
   };
 
   struct ClientLeave
   {
     std::string client_name;
-    std::size_t hours;
-    std::size_t mins;
   };
 
   struct EventError
@@ -43,11 +35,9 @@ namespace club
       NOT_OPENED,
       IDENTITY_VIOLATE
     };
-    std::size_t hours;
-    std::size_t mins;
   };
 
-  using EventBase = std::variant< ClientArrive, ClientSit, ClientWait, ClientLeave, EventError >;
+  using EventSpecific = std::variant< ClientArrive, ClientSit, ClientWait, ClientLeave, EventError >;
 };
 
 #endif

@@ -3,20 +3,25 @@
 
 #include <string>
 
-#include "eventBase.hpp"
+#include <event/eventSpecific.hpp>
+#include <time/time.hpp>
 
 namespace club
 {
   class Event
   {
   public:
-    Event(std::string_view source);
+    Event(Time time, EventSpecific specific);
 
-    const EventBase& get_base();
+    const EventSpecific& get_specific();
+    Time get_time();
 
   private:
-    EventBase base_;
-  }
+    EventSpecific base_;
+    Time time_;
+  };
+
+  auto operator<=>(const Event& a, const Event& b);
 }
 
 #endif
