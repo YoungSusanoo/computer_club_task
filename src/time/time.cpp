@@ -1,5 +1,7 @@
 #include <time/time.hpp>
 
+#include <stdexcept>
+
 club::Time::Time(std::size_t h, std::size_t m):
   hours(h),
   mins(m)
