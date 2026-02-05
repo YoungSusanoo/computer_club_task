@@ -49,6 +49,7 @@ namespace club
       CLIENT_UNKNOWN,
       PLACE_IS_BUSY,
       NOT_OPENED,
+      PLACES_AVAILABLE,
       IDENTITY_VIOLATE
     } error;
   };
