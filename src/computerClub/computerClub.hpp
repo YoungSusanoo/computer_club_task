@@ -26,14 +26,14 @@ namespace club
 
     void handle_event(const Event& event);
 
-    auto get_tables()
+    auto get_events()
     {
-      return handler_.tables | std::ranges::views::all;
+      return handler_.events | std::ranges::views::all;
     }
     auto complete_shift()
     {
       complete_shift_internal();
-      return handler_.events | std::ranges::views::all;
+      return handler_.tables | std::ranges::views::all;
     }
 
   private:
