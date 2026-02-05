@@ -6,13 +6,17 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(HEADERS 
+    src/utils/utils.hpp
     src/event/event.hpp
     src/time/time.hpp
+    src/computerClub/computerClub.hpp
 )
 set(SOURCES 
+    src/utils/utils.cpp
     src/main.cpp
     src/event/event.cpp
     src/time/time.cpp
+    src/computerClub/computerClub.cpp
 )
 
 add_executable(computer_club_task ${SOURCES})

@@ -8,6 +8,12 @@
 
 namespace club
 {
+  enum class EventType
+  {
+    INPUT,
+    OUTPUT
+  };
+
   struct ClientArrive
   {
     std::string client_name;
@@ -19,6 +25,7 @@ namespace club
     std::string client_name;
     std::size_t table;
     Time time;
+    EventType type;
   };
 
   struct ClientWait
@@ -31,25 +38,24 @@ namespace club
   {
     std::string client_name;
     Time time;
+    EventType type;
   };
 
   struct EventError
   {
+    Time time;
     enum class Type
     {
       CLIENT_UNKNOWN,
       PLACE_IS_BUSY,
       NOT_OPENED,
       IDENTITY_VIOLATE
-    };
-
-    Time time;
-    Type type;
+    } error;
   };
 
   using Event = std::variant< ClientArrive, ClientSit, ClientWait, ClientLeave, EventError >;
 
-  auto operator<=>(const Event& a, const Event& b);
+  std::strong_ordering operator<=>(const Event& a, const Event& b);
 }
 
 #endif
