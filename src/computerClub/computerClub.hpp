@@ -5,6 +5,7 @@
 #include <set>
 #include <map>
 #include <vector>
+#include <queue>
 
 #include <event/event.hpp>
 
@@ -43,7 +44,8 @@ namespace club
       std::vector< Table > tables;
       Time start;
       Time end;
-      std::size_t queue;
+      std::queue< std::string > queue;
+      std::size_t free_tables;
       std::size_t price;
 
       EventHandler(std::size_t tables_num, std::size_t price, Time start, Time end);
