@@ -30,7 +30,6 @@ namespace club
 
   struct EventStringMaker
   {
-    std::string time_to_string(Time time);
     std::string operator()(const ClientArrive& e);
     std::string operator()(const ClientSit& e);
     std::string operator()(const ClientWait& e);
@@ -151,7 +150,7 @@ std::string club::event_to_string(const Event& event)
   return std::visit(EventStringMaker {}, event);
 }
 
-std::string club::EventStringMaker::time_to_string(Time time)
+std::string club::time_to_string(Time time)
 {
   std::string result;
   result += std::to_string(time.hours() / 10);
