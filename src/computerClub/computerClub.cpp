@@ -6,6 +6,7 @@ club::ComputerClub::EventHandler::EventHandler(std::size_t t_num, std::size_t p,
   tables(t_num),
   start { s },
   end { e },
+  last_time { 0, 0 },
   queue {},
   free_tables { t_num },
   price { p }
@@ -20,9 +21,17 @@ void club::ComputerClub::handle_event(const Event& event)
   std::visit(handler_, event);
 }
 
+void club::ComputerClub::EventHandler::check_event_order(Time time)
+{
+  if (!events.empty() && time < last_time)
+  {
+    throw std::invalid_argument("computerClub.cpp: !events.empty() && time < last_time");
+  }
+}
+
 void club::ComputerClub::EventHandler::count_payment(std::size_t table, Time time)
 {
-  if (!table || !tables[table - 1].busy)
+  if (!tables[table - 1].busy)
   {
     return;
   }
@@ -35,8 +44,17 @@ void club::ComputerClub::EventHandler::count_payment(std::size_t table, Time tim
   free_tables++;
 }
 
+void club::ComputerClub::EventHandler::seat_client(client_map_t::iterator it, std::size_t table, Time time)
+{
+  it->second = table;
+  tables[table - 1].busy = true;
+  tables[table - 1].start_mins = time.hours() * 60 + time.mins();
+  free_tables--;
+}
+
 void club::ComputerClub::EventHandler::operator()(const ClientArrive& e)
 {
+  check_event_order(e.time);
   events.emplace_back(e);
   if (clients.contains(e.client_name))
   {
@@ -48,11 +66,18 @@ void club::ComputerClub::EventHandler::operator()(const ClientArrive& e)
     events.emplace_back(EventError { e.time, EventError::Type::NOT_OPENED });
     return;
   }
-  clients[e.client_name] = 0;
+  clients[e.client_name] = {};
+  last_time = e.time;
 }
 
 void club::ComputerClub::EventHandler::operator()(const ClientSit& e)
 {
+  check_event_order(e.time);
+  if (e.table == 0 || e.table > tables.size())
+  {
+    throw std::invalid_argument("computerClub.cpp: e.table == 0 || e.table > tables.size()");
+  }
+
   events.emplace_back(e);
   auto client_it = clients.find(e.client_name);
   if (client_it == clients.end())
@@ -70,14 +95,13 @@ void club::ComputerClub::EventHandler::operator()(const ClientSit& e)
   {
     count_payment(client_it->second.value(), e.time);
   }
-  client_it->second = e.table;
-  tables[e.table - 1].busy = true;
-  tables[e.table - 1].start_mins = e.time.hours() * 60 + e.time.mins();
-  free_tables--;
+  seat_client(client_it, e.table, e.time);
+  last_time = e.time;
 }
 
 void club::ComputerClub::EventHandler::operator()(const ClientWait& e)
 {
+  check_event_order(e.time);
   events.emplace_back(e);
   if (free_tables)
   {
@@ -91,10 +115,12 @@ void club::ComputerClub::EventHandler::operator()(const ClientWait& e)
   }
 
   queue.emplace(e.client_name);
+  last_time = e.time;
 }
 
 void club::ComputerClub::EventHandler::operator()(const ClientLeave& e)
 {
+  check_event_order(e.time);
   events.emplace_back(e);
   if (!clients.contains(e.client_name))
   {
@@ -112,14 +138,16 @@ void club::ComputerClub::EventHandler::operator()(const ClientLeave& e)
   count_payment(table.value(), e.time);
   if (!queue.empty())
   {
-    operator()(ClientSit { queue.front(), table.value(), e.time, EventType::OUTPUT });
+    seat_client(clients.find(queue.front()), table.value(), e.time);
+    events.emplace_back(ClientSit { queue.front(), table.value(), e.time, EventType::OUTPUT });
     queue.pop();
   }
+  last_time = e.time;
 }
 
 void club::ComputerClub::EventHandler::operator()(const EventError& e)
 {
-  return;
+  throw std::invalid_argument("computerClub.cpp: operator()(const EventError& e) invoked");
 }
 
 void club::ComputerClub::complete_shift_internal()

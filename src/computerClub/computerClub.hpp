@@ -39,18 +39,22 @@ namespace club
   private:
     struct EventHandler
     {
+      using client_map_t = std::map< std::string, std::optional< std::size_t > >;
       std::vector< Event > events;
-      std::map< std::string, std::optional< std::size_t > > clients;
+      client_map_t clients;
       std::vector< Table > tables;
       Time start;
       Time end;
+      Time last_time;
       std::queue< std::string > queue;
       std::size_t free_tables;
       std::size_t price;
 
       EventHandler(std::size_t tables_num, std::size_t price, Time start, Time end);
 
+      void check_event_order(Time time);
       void count_payment(std::size_t table, Time time);
+      void seat_client(client_map_t::iterator it, std::size_t table, Time time);
 
       void operator()(const ClientArrive& e);
       void operator()(const ClientSit& e);
