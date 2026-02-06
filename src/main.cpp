@@ -100,6 +100,7 @@ int main(int argc, char* argv[])
     catch (...)
     {
       std::cerr << "Invalid line: " << event_line << '\n';
+      return 1;
     }
   }
 
