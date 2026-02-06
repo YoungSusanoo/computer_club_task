@@ -39,7 +39,7 @@ namespace club
   private:
     struct EventHandler
     {
-      std::set< Event > events;
+      std::multiset< Event > events;
       std::map< std::string, std::size_t > clients;
       std::vector< Table > tables;
       Time start;
