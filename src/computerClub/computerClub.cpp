@@ -37,15 +37,15 @@ void club::ComputerClub::EventHandler::count_payment(std::size_t table, Time tim
 
 void club::ComputerClub::EventHandler::operator()(const ClientArrive& e)
 {
-  events.emplace(e);
+  events.emplace_back(e);
   if (clients.contains(e.client_name))
   {
-    events.emplace(EventError { e.time, EventError::Type::IDENTITY_VIOLATE });
+    events.emplace_back(EventError { e.time, EventError::Type::IDENTITY_VIOLATE });
     return;
   }
   if (e.time < start)
   {
-    events.emplace(EventError { e.time, EventError::Type::NOT_OPENED });
+    events.emplace_back(EventError { e.time, EventError::Type::NOT_OPENED });
     return;
   }
   clients[e.client_name] = 0;
@@ -53,16 +53,16 @@ void club::ComputerClub::EventHandler::operator()(const ClientArrive& e)
 
 void club::ComputerClub::EventHandler::operator()(const ClientSit& e)
 {
-  events.emplace(e);
+  events.emplace_back(e);
   auto client_it = clients.find(e.client_name);
   if (client_it == clients.end())
   {
-    events.emplace(EventError { e.time, EventError::Type::CLIENT_UNKNOWN });
+    events.emplace_back(EventError { e.time, EventError::Type::CLIENT_UNKNOWN });
     return;
   }
   if (client_it->second == e.table || tables[e.table - 1].busy)
   {
-    events.emplace(EventError { e.time, EventError::Type::PLACE_IS_BUSY });
+    events.emplace_back(EventError { e.time, EventError::Type::PLACE_IS_BUSY });
     return;
   }
 
@@ -75,15 +75,15 @@ void club::ComputerClub::EventHandler::operator()(const ClientSit& e)
 
 void club::ComputerClub::EventHandler::operator()(const ClientWait& e)
 {
-  events.emplace(e);
+  events.emplace_back(e);
   if (free_tables)
   {
-    events.emplace(EventError { e.time, EventError::Type::PLACES_AVAILABLE });
+    events.emplace_back(EventError { e.time, EventError::Type::PLACES_AVAILABLE });
     return;
   }
   else if (queue.size() > tables.size())
   {
-    events.emplace(ClientLeave { e.client_name, e.time, EventType::OUTPUT });
+    events.emplace_back(ClientLeave { e.client_name, e.time, EventType::OUTPUT });
     return;
   }
 
@@ -92,10 +92,10 @@ void club::ComputerClub::EventHandler::operator()(const ClientWait& e)
 
 void club::ComputerClub::EventHandler::operator()(const ClientLeave& e)
 {
-  events.emplace(e);
+  events.emplace_back(e);
   if (!clients.contains(e.client_name))
   {
-    events.emplace(EventError { e.time, EventError::Type::CLIENT_UNKNOWN });
+    events.emplace_back(EventError { e.time, EventError::Type::CLIENT_UNKNOWN });
     return;
   }
 
@@ -129,7 +129,7 @@ void club::ComputerClub::complete_shift_internal()
   {
     auto front_it = handler_.clients.begin();
     handler_.count_payment(front_it->second, handler_.end);
-    handler_.events.emplace(ClientLeave { front_it->first, handler_.end, EventType::OUTPUT });
+    handler_.events.emplace_back(ClientLeave { front_it->first, handler_.end, EventType::OUTPUT });
     handler_.clients.erase(front_it);
   }
 }

@@ -2,7 +2,6 @@
 #define COMPUTERCLUB_HPP
 
 #include <ranges>
-#include <set>
 #include <map>
 #include <vector>
 #include <queue>
@@ -39,7 +38,7 @@ namespace club
   private:
     struct EventHandler
     {
-      std::multiset< Event > events;
+      std::vector< Event > events;
       std::map< std::string, std::size_t > clients;
       std::vector< Table > tables;
       Time start;
