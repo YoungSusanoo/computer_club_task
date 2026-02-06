@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
     {
       std::size_t pos = 0;
       price = std::stoull(price_line, &pos);
-      if (pos != price_line.size())
+      if (pos != price_line.size() || price == 0)
       {
         std::cerr << "Invalid line: " << price_line << '\n';
         return 1;
