@@ -108,7 +108,7 @@ void club::ComputerClub::EventHandler::operator()(const ClientWait& e)
     events.emplace_back(EventError { e.time, EventError::Type::PLACES_AVAILABLE });
     return;
   }
-  else if (queue.size() > tables.size())
+  else if (queue.size() == tables.size())
   {
     events.emplace_back(ClientLeave { e.client_name, e.time, EventType::OUTPUT });
     return;
