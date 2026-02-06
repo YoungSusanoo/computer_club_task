@@ -118,4 +118,5 @@ int main(int argc, char* argv[])
     std::size_t curr_mins = tables[i].total_mins % 60;
     std::cout << club::time_to_string(club::Time { curr_hours, curr_mins }) << '\n';
   }
+  return 0;
 }

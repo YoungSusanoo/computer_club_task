@@ -24,6 +24,7 @@ target_include_directories(computer_club_task PUBLIC src)
 
 include(CTest)
 
+option(BUILD_TESTING "Build tests" OFF)
 if (BUILD_TESTING)
   include(FetchContent)
 
@@ -39,6 +40,7 @@ if (BUILD_TESTING)
 
   add_executable(computer_club_task_tests
     tests/computerClubTests.cpp
+    tests/mainTests.cpp
     src/utils/utils.cpp
     src/event/event.cpp
     src/time/time.cpp
