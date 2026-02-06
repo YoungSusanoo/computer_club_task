@@ -66,6 +66,10 @@ void club::ComputerClub::EventHandler::operator()(const ClientSit& e)
     return;
   }
 
+  if (client_it->second != 0)
+  {
+    count_payment(client_it->second, e.time);
+  }
   client_it->second = e.table;
   tables[e.table - 1].busy = true;
   tables[e.table - 1].start_mins = e.time.hours() * 60 + e.time.mins();
