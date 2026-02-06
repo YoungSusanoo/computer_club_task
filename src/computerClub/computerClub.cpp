@@ -22,7 +22,7 @@ void club::ComputerClub::handle_event(const Event& event)
 
 void club::ComputerClub::EventHandler::count_payment(std::size_t table, Time time)
 {
-  if (!tables[table - 1].busy)
+  if (!table || !tables[table - 1].busy)
   {
     return;
   }
@@ -31,6 +31,7 @@ void club::ComputerClub::EventHandler::count_payment(std::size_t table, Time tim
   mins_elapsed -= tables[table - 1].start_mins;
   tables[table - 1].total_mins += mins_elapsed;
   tables[table - 1].total_income += (mins_elapsed + 59) / 60 * price;
+  tables[table - 1].busy = false;
   free_tables++;
 }
 
@@ -99,9 +100,36 @@ void club::ComputerClub::EventHandler::operator()(const ClientLeave& e)
 
   std::size_t table = clients[e.client_name];
   clients.erase(e.client_name);
-  clients[queue.front()] = table;
-
   events.emplace(e);
-  events.emplace(ClientSit { queue.front(), table, e.time, EventType::OUTPUT });
-  queue.pop();
+  if (table == 0)
+  {
+    return;
+  }
+
+  if (!queue.empty())
+  {
+    clients[queue.front()] = table;
+    operator()(ClientSit { queue.front(), table, e.time, EventType::OUTPUT });
+    queue.pop();
+  }
+  else
+  {
+    count_payment(table, e.time);
+  }
+}
+
+void club::ComputerClub::EventHandler::operator()(const EventError& e)
+{
+  return;
+}
+
+void club::ComputerClub::complete_shift_internal()
+{
+  while (!handler_.clients.empty())
+  {
+    auto front_it = handler_.clients.begin();
+    handler_.count_payment(front_it->second, handler_.end);
+    handler_.events.emplace(ClientLeave { front_it->first, handler_.end, EventType::OUTPUT });
+    handler_.clients.erase(front_it);
+  }
 }
