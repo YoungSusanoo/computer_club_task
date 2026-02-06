@@ -22,9 +22,9 @@ set(SOURCES
 add_executable(computer_club_task ${SOURCES})
 target_include_directories(computer_club_task PUBLIC src)
 
+option(BUILD_TESTING "Build tests" OFF)
 include(CTest)
 
-option(BUILD_TESTING "Build tests" OFF)
 if (BUILD_TESTING)
   include(FetchContent)
 
