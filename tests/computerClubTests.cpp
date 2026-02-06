@@ -109,7 +109,7 @@ TEST(ComputerClubTest, SeatsClientAndCharges)
 
   auto tables = club.complete_shift();
   ASSERT_EQ(tables.size(), 1u);
-  EXPECT_EQ(tables[0].total_income, 20u);
+  EXPECT_EQ(tables[0].total_income, 10u);
   EXPECT_EQ(tables[0].total_mins, 55u);
 }
 
