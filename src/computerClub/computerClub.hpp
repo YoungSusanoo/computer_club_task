@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <queue>
+#include <optional>
 
 #include <event/event.hpp>
 
@@ -39,7 +40,7 @@ namespace club
     struct EventHandler
     {
       std::vector< Event > events;
-      std::map< std::string, std::size_t > clients;
+      std::map< std::string, std::optional< std::size_t > > clients;
       std::vector< Table > tables;
       Time start;
       Time end;

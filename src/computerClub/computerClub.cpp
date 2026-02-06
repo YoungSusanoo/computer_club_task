@@ -66,9 +66,9 @@ void club::ComputerClub::EventHandler::operator()(const ClientSit& e)
     return;
   }
 
-  if (client_it->second != 0)
+  if (client_it->second.has_value())
   {
-    count_payment(client_it->second, e.time);
+    count_payment(client_it->second.value(), e.time);
   }
   client_it->second = e.table;
   tables[e.table - 1].busy = true;
@@ -102,17 +102,17 @@ void club::ComputerClub::EventHandler::operator()(const ClientLeave& e)
     return;
   }
 
-  std::size_t table = clients[e.client_name];
+  std::optional< std::size_t > table = clients[e.client_name];
   clients.erase(e.client_name);
-  if (table == 0)
+  if (!table.has_value())
   {
     return;
   }
 
-  count_payment(table, e.time);
+  count_payment(table.value(), e.time);
   if (!queue.empty())
   {
-    operator()(ClientSit { queue.front(), table, e.time, EventType::OUTPUT });
+    operator()(ClientSit { queue.front(), table.value(), e.time, EventType::OUTPUT });
     queue.pop();
   }
 }
@@ -127,7 +127,10 @@ void club::ComputerClub::complete_shift_internal()
   while (!handler_.clients.empty())
   {
     auto front_it = handler_.clients.begin();
-    handler_.count_payment(front_it->second, handler_.end);
+    if (front_it->second.has_value())
+    {
+      handler_.count_payment(front_it->second.value(), handler_.end);
+    }
     handler_.events.emplace_back(ClientLeave { front_it->first, handler_.end, EventType::OUTPUT });
     handler_.clients.erase(front_it);
   }
