@@ -103,8 +103,18 @@ int main(int argc, char* argv[])
     }
   }
 
-  for (club::Event& event : pc_club.complete_shift())
+  auto tables = pc_club.complete_shift();
+  std::cout << club::time_to_string(start) << '\n';
+  for (const auto& event : pc_club.get_events())
   {
     std::cout << club::event_to_string(event) << '\n';
+  }
+  std::cout << club::time_to_string(end) << '\n';
+  for (std::size_t i = 0; i < tables_n; i++)
+  {
+    std::cout << i + 1 << ' ' << tables[i].total_income << ' ';
+    std::size_t curr_hours = tables[i].total_mins / 60;
+    std::size_t curr_mins = tables[i].total_mins % 60;
+    std::cout << club::time_to_string(club::Time { curr_hours, curr_mins }) << '\n';
   }
 }
