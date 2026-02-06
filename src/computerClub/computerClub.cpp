@@ -66,7 +66,6 @@ void club::ComputerClub::EventHandler::operator()(const ClientSit& e)
     return;
   }
 
-  count_payment(client_it->second, e.time);
   client_it->second = e.table;
   tables[e.table - 1].busy = true;
   tables[e.table - 1].start_mins = e.time.hours() * 60 + e.time.mins();
@@ -106,15 +105,11 @@ void club::ComputerClub::EventHandler::operator()(const ClientLeave& e)
     return;
   }
 
+  count_payment(table, e.time);
   if (!queue.empty())
   {
-    clients[queue.front()] = table;
     operator()(ClientSit { queue.front(), table, e.time, EventType::OUTPUT });
     queue.pop();
-  }
-  else
-  {
-    count_payment(table, e.time);
   }
 }
 
