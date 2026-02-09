@@ -25,7 +25,7 @@ namespace club
   constexpr char client_unknown_er[] = "ClientUnknown";
   constexpr char place_is_busy_er[] = "PlaceIsBusy";
   constexpr char not_opened_er[] = "NotOpenYet";
-  constexpr char places_available_er[] = "ICanWaitNoLonger";
+  constexpr char places_available_er[] = "ICanWaitNoLonger!";
   constexpr char identity_violate_er[] = "YouShallNotPass";
 
   struct EventStringMaker
